@@ -6,11 +6,26 @@ const StoryContainer = () => {
     const [stories, setStories] = useState([]);
     const [storyDetails, setStoryDetails] = useState("");
     const [selectedStory, setSelectedStory] = useState(null);
+    const storyId = () => {
+        console.log("here");
 
-    useEffect(() => {
       fetch("https://hacker-news.firebaseio.com/v0/topstories.json")
       .then(res => res.json())
-      .then(data => setStories(data.results))
+      .then(data => {
+            const selectedList = data.slice(0,20)
+            // console.log(selectedList);
+            const Promises = selectedList.map((id) => {
+              return fetch(`https://hacker-news.firebaseio.com/v0/item/${id}.json`).then(res=>res.json())
+            })
+            // console.log(Promises);
+            Promise.all(Promises).then(data=>console.log(data))
+        })
+    }
+    useEffect(() => {
+        // fetch("https://hacker-news.firebaseio.com/v0/item/{storyId}.json")
+        // .then(res => res.json())
+        // .then(data => setStories(data.results))
+        storyId();
     }, [])
 
     const handleSelectChange = (story) => {
@@ -27,7 +42,7 @@ const StoryContainer = () => {
     return (
         <>
         <h1> Top Stories:</h1>
-        <StorySelect stories = {stories} handleSelectChange = {handleSelectChange}/>
+        {/* <StorySelect stories = {stories} handleSelectChange = {handleSelectChange}/> */}
         </>
     );
 };
